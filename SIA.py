@@ -148,11 +148,14 @@ months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec
 x_pos = np.arange(len(months))
 test = []
 j = 0
+print series2.values
 # Collecting and displaying the correct values: a plot for values of every single year.
 for i in range(len(series2.values)):
 	if j in range(12):
 		test.append(series2.values[i][1])
 		j = j + 1
+		if(i == len(series2.values)-1):
+			pyplot.plot(x_pos, test, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
 	else:
 		pyplot.plot(x_pos, test, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
 		test = []
