@@ -10,9 +10,6 @@ from fpdf import FPDF
 # Graphic's different design
 pyplot.style.use('ggplot')
 
-# User input that allowed to DISPLAY AND SAVE the graphic otherwise just SAVE it.
-choice = input("Do you want to display the graphic?\n 0 = NO \n 1 = YES\n\n")
-
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # SINGLE INPUT GRAPHICS OVERVIEW #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,23 +36,24 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
             y += thumbnail_height
         x += thumbnail_width
         y = 0
+
+
     # Saving the current input overview image
     if dest==0:
     	script_dir = os.path.dirname(__file__)
-    	results_dir = os.path.join(script_dir, sys.argv[1]+"/"+sys.argv[2]+"/")
+    	results_dir = os.path.join(script_dir, "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/")
     	if not os.path.isdir(results_dir):
     		os.makedirs(results_dir)
         new_im.save(results_dir+"/"+sys.argv[2]+"_Graphics_Overview.jpg")
+        #new_im.show()
     # Saving the current input overview image that will be used for the total overview pdf
     if dest==1:
-    	script_dir = os.path.dirname(__file__)
-    	results_dir = os.path.join(script_dir, sys.argv[1]+"/Total_Evidences/Single_Inputs")
-    	if not os.path.isdir(results_dir):
-    		os.makedirs(results_dir)
-        new_im.save(results_dir+"/"+sys.argv[2]+"_Overview.jpg")
+    	script_dir2 = os.path.dirname(__file__)
+    	results_dir2 = os.path.join(script_dir2, "Results/" + sys.argv[1]+"/Total_Evidences/Single_Inputs")
+    	if not os.path.isdir(results_dir2):
+    		os.makedirs(results_dir2)
+        new_im.save(results_dir2+"/"+sys.argv[2]+"_Overview.jpg")
     # Showing the current input overview image
-    if (choice==1 and dest==0):
-        new_im.show()
 
 #-------------------------------------------------------------------------------------------
 
@@ -69,9 +67,10 @@ def normalization(values):
 #%%%%%%%%%%%%%%%%%%%%%%
 # TRENDLINE EQUATION #
 #%%%%%%%%%%%%%%%%%%%%%%
+
 def trendlineNorm(x, y):
 	z = np.polyfit(x, y, 1)
-	print "Normalized Angular Coefficient:", z[0]  
+	return z[0]
 
 def trendline(x, y, col):
     # Add correlation line
@@ -80,8 +79,8 @@ def trendline(x, y, col):
 	p = np.poly1d(z)
 	pylab.plot(x,p(x), c=col)
 	# Display the line equation:
-	print "Angular Coefficient:", z[0];
-	trendlineNorm(x, normalization(y))
+	z2 = trendlineNorm(x, normalization(y))
+	return z[0], z2
     
 #-------------------------------------------------------------------------------------------
 
@@ -90,12 +89,13 @@ def trendline(x, y, col):
 #%%%%%%%%%%%%%%%%%%%%%%%%%
 def saveFigure(descr):
     script_dir = os.path.dirname(__file__)
-    results_dir = os.path.join(script_dir, sys.argv[1] + "/" + sys.argv[2]+"/")
+    results_dir = os.path.join(script_dir, "Results/" + sys.argv[1] + "/" + sys.argv[2]+"/")
     if not os.path.isdir(results_dir):
         os.makedirs(results_dir)
     pyplot.savefig(results_dir + sys.argv[2]+descr, format="jpg")
 #-------------------------------------------------------------------------------------------
 
+print "\n\n --- ", sys.argv[1], " - ", sys.argv[2], " ---"
 yearInput = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[0])
 yearsLen = len(yearInput.values)/12
 #%%%%%%%%%%%%%%%%%%
@@ -117,15 +117,19 @@ for i in range(len(yearInput)):
         years.append(yearInput.values[i][0])
         j=0
     else:
-        j=j+1
+        j=j+1 
 x = range(0, len(yearInput.values))
 pyplot.xticks(np.arange(min(x), max(x)+1, 12.0), years)
 # Setting the graphic's title
 pyplot.title(sys.argv[2]+ ": Total graphic")
 series2 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[2]], squeeze=True)
-trendline(x, series2.values.astype(float), "red")
+z1, z2 = trendline(x, series2.values.astype(float), "red")
 saveFigure("_Total.jpg")
-
+results_dir = "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+"/AngCoeff.csv"
+with open(results_dir, "w") as text_file:
+	text_file.write("," + sys.argv[1] + "-" + sys.argv[2]+"\n")
+	text_file.write("," + "Ang_Coeff " + "," + str(z1)+"\n")
+	text_file.write("," + "Norma_Ang_Coeff " + "," + str(z2)+"\n")
 
 #%%%%%%%%%%%%%%%%%%
 # ANALYSIS PART 2 #
@@ -240,12 +244,13 @@ saveFigure("_months_Matrix.jpg")
 # Autogenerate the overview image for the current input and update the total overview pdf
 #-------------------------------------------------------------------------------------------
 # Filling the array with the current input's graphics
-listofimages=[sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_Total.jpg",
-            sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years_Matrix.jpg", 
-            sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years.jpg",
-            sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_months_Matrix.jpg"]
-# Creating current single input overview
-create_single_overview(2, 2, 0, 1600, 1200, listofimages)
+listofimages=["Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_Total.jpg",
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years_Matrix.jpg", 
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years.jpg",
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_months_Matrix.jpg"]
+
 # Updating the current single input overview used in the total overview pdf
 create_single_overview(4, 1, 1, 3200, 600, listofimages)
+# Creating current single input overview
+create_single_overview(2, 2, 0, 1600, 1200, listofimages)
 #-------------------------------------------------------------------------------------------
