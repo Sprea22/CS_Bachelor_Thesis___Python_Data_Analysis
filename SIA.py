@@ -44,7 +44,7 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
     	results_dir = os.path.join(script_dir, "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/")
     	if not os.path.isdir(results_dir):
     		os.makedirs(results_dir)
-        new_im.save(results_dir+"/"+sys.argv[2]+"_Graphics_Overview.jpg")
+        new_im.save(results_dir+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Graphics_Overview.jpg")
         #new_im.show()
     # Saving the current input overview image that will be used for the total overview pdf
     if dest==1:
@@ -52,7 +52,7 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
     	results_dir2 = os.path.join(script_dir2, "Results/" + sys.argv[1]+"/Total_Evidences/Single_Inputs")
     	if not os.path.isdir(results_dir2):
     		os.makedirs(results_dir2)
-        new_im.save(results_dir2+"/"+sys.argv[2]+"_Overview.jpg")
+        new_im.save(results_dir2+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Overview.jpg")
     # Showing the current input overview image
 
 #-------------------------------------------------------------------------------------------
@@ -92,10 +92,12 @@ def saveFigure(descr):
     results_dir = os.path.join(script_dir, "Results/" + sys.argv[1] + "/" + sys.argv[2]+"/")
     if not os.path.isdir(results_dir):
         os.makedirs(results_dir)
-    pyplot.savefig(results_dir + sys.argv[2]+descr, format="jpg")
+    pyplot.savefig(results_dir + sys.argv[1] +"_"+sys.argv[2]+descr, format="jpg")
 #-------------------------------------------------------------------------------------------
 
-print "\n\n --- ", sys.argv[1], " - ", sys.argv[2], " ---"
+print "-------------------------------"
+print " Elaborating the current input: \n\n Dataset: " + sys.argv[1]
+print " Data Input: " + sys.argv[2]
 yearInput = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[0])
 yearsLen = len(yearInput.values)/12
 #%%%%%%%%%%%%%%%%%%
@@ -121,11 +123,11 @@ for i in range(len(yearInput)):
 x = range(0, len(yearInput.values))
 pyplot.xticks(np.arange(min(x), max(x)+1, 12.0), years)
 # Setting the graphic's title
-pyplot.title(sys.argv[2]+ ": Total graphic")
+pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Total graphic")
 series2 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[2]], squeeze=True)
 z1, z2 = trendline(x, series2.values.astype(float), "red")
 saveFigure("_Total.jpg")
-results_dir = "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+"/AngCoeff.csv"
+results_dir = "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_AngCoeff.csv"
 with open(results_dir, "w") as text_file:
 	text_file.write("," + sys.argv[1] + "-" + sys.argv[2]+"\n")
 	text_file.write("," + "Ang_Coeff " + "," + str(z1)+"\n")
@@ -148,7 +150,6 @@ months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec
 x_pos = np.arange(len(months))
 test = []
 j = 0
-print series2.values
 # Collecting and displaying the correct values: a plot for values of every single year.
 for i in range(len(series2.values)):
 	if j in range(12):
@@ -165,7 +166,8 @@ for i in range(len(series2.values)):
 ax.legend(loc=4, ncol=1, fancybox=True, shadow=True)
 pyplot.xticks(x_pos,months)
 pyplot.xlim(0,11)
-pyplot.title(sys.argv[2]+ ": Single year's graphic")
+pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Single year's graphic")
+pyplot.tight_layout()
 saveFigure("_years.jpg")
 
 #%%%%%%%%%%%%%%%%%%
@@ -198,7 +200,7 @@ ax = fig2.add_subplot(111)
 # Displaying the matrix with the results about correlation coefficents
 cax = ax.matshow(test, interpolation='nearest')
 # Setting the graphic's title
-pyplot.title(sys.argv[2]+ ": Correlation between different years")
+pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Correlation between different years")
 # Setting the x and y axis of the matrix
 x_pos = np.arange(yearsLen)
 y_pos = np.arange(yearsLen)
@@ -206,6 +208,7 @@ pyplot.yticks(y_pos,years)
 pyplot.xticks(x_pos,years)
 #cax.set_clim(vmin=0.5, vmax=1)
 pyplot.colorbar(cax)
+pyplot.tight_layout()
 # Saving the current graphic in the right folder
 saveFigure("_years_Matrix.jpg")
 
@@ -228,7 +231,7 @@ ax = fig2.add_subplot(111)
 # Displaying the matrix with the results about correlation coefficents
 cax = ax.matshow(corrRes, interpolation='nearest')
 # Setting the graphic's title
-pyplot.title(sys.argv[2]+ ": Correlation between different months")
+pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Correlation between different months")
 # Setting the x and y axis of the matrix
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 x_pos = np.arange(len(months))
@@ -237,6 +240,7 @@ pyplot.yticks(y_pos,months)
 pyplot.xticks(x_pos,months)
 #cax.set_clim(vmin=0, vmax=1)
 pyplot.colorbar(cax)
+pyplot.tight_layout()
 saveFigure("_months_Matrix.jpg")
 #-------------------------------------------------------------------------------------------
 
@@ -247,13 +251,15 @@ saveFigure("_months_Matrix.jpg")
 # Autogenerate the overview image for the current input and update the total overview pdf
 #-------------------------------------------------------------------------------------------
 # Filling the array with the current input's graphics
-listofimages=["Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_Total.jpg",
-            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years_Matrix.jpg", 
-            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_years.jpg",
-            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[2]+"_months_Matrix.jpg"]
+listofimages=["Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_Total.jpg",
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_years_Matrix.jpg", 
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_years.jpg",
+            "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_months_Matrix.jpg"]
 
 # Updating the current single input overview used in the total overview pdf
 create_single_overview(4, 1, 1, 3200, 600, listofimages)
 # Creating current single input overview
 create_single_overview(2, 2, 0, 1600, 1200, listofimages)
+
+print "\n Done! \n-------------------------------\n################################"
 #-------------------------------------------------------------------------------------------

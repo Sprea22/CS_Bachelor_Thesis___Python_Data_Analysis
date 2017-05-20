@@ -27,9 +27,12 @@ for i in range(len(series3.columns)+1):
 			labels.append(series3.columns[i-1])
 ax.set_xticklabels(labels)
 ax.set_yticklabels(labels)
+pyplot.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='left')
+pyplot.setp(ax.get_yticklabels(), rotation=30, horizontalalignment='right')
 #cax.set_clim(vmin=0.5, vmax=1) 
 pyplot.colorbar(cax)
-pyplot.title("Correlation Coefficients Matrix - " + sys.argv[1])
+pyplot.title("Correlation Coefficients Matrix - " + sys.argv[1], y=1.15)
+pyplot.tight_layout()
 pyplot.savefig("Results/" + sys.argv[1]+"/Total_Evidences/"+sys.argv[1]+"_Total_Matrix.jpg", format="jpg")
 
 
@@ -39,14 +42,15 @@ temp = []
 
 for i in series3.columns:
 	index = sys.argv[1]+"-"+i
-	tempSeries = pd.read_csv("Results/"+sys.argv[1]+"/"+i+"/AngCoeff.csv", header=0)
+	tempSeries = pd.read_csv("Results/"+sys.argv[1]+"/"+i+"/"+sys.argv[1]+"_"+i+"_AngCoeff.csv", header=0)
 	temp.append(tempSeries[index].values[1])
 x = range(len(series3.columns))
 pyplot.barh(x, temp)
 # Displaying and saving the bar graphic  
 pyplot.yticks(x,series3.columns)
 pyplot.title("Normalized Angular coefficients - " + sys.argv[1])
-pyplot.savefig("Results/"+sys.argv[1]+"/Total_Evidences/Norm_Ang_Coeffs.jpg", format="jpg")
+pyplot.tight_layout()
+pyplot.savefig("Results/"+sys.argv[1]+"/Total_Evidences/"+sys.argv[1]+"_Norm_Ang_Coeffs.jpg", format="jpg")
 
 # Showing the graphics to the user if the input choice is equal at "1"
 

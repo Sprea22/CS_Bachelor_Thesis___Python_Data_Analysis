@@ -65,7 +65,7 @@ def displayYears(input, col):
 
 def displayTotal(input, col):
 	seriesF = series3.values.astype(float)
-	pyplot.plot(normalization(seriesF), color=col, linewidth=2)
+	pyplot.plot(normalization(seriesF), color=col, linewidth=2, label=input)
 	years = []
 	j = 0
 	# Collecting and displaying the correct values: a plot for values of every single year.
@@ -77,6 +77,7 @@ def displayTotal(input, col):
 	        j=j+1
 	x = range(0, len(yearInput.values))
 	pyplot.title(sys.argv[1])
+	ax4.legend(loc=4, ncol=1, fancybox=True, shadow=True)
 	pyplot.xticks(np.arange(min(x), max(x)+1, 12.0), years)
 
 
