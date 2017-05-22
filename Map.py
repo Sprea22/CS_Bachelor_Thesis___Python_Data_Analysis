@@ -17,32 +17,13 @@ def main():
  	# Downloaded from http://biogeo.ucdavis.edu/data/gadm2.8/shp/NOR_adm_shp.zip
 	fname = 'NOR/NOR_adm1.shp'
 	NOR_shapes = list(shpreader.Reader(fname).geometries())
+	plt.figure()
 	ax = plt.axes(projection=ccrs.Robinson())
 	ax.coastlines(resolution='10m')
 	ax.set_extent([4, 32, 57, 72], ccrs.Robinson())	
 
 	# Rendering the sea
 	#ax.stock_img()
-
-	# NOR_shapes[0] -> Ostfold
-	# NOR_shapes[1] -> Akershus
-	# NOR_shapes[2] -> Aust Agder
-	# NOR_shapes[3] -> Buskerud
-	# NOR_shapes[4] -> Finnmark
-	# NOR_shapes[5] -> Hedmark
-	# NOR_shapes[6] -> Hordaland
-	# NOR_shapes[7] -> More og Romsdal
-	# NOR_shapes[8] -> Nord Trondelag
-	# NOR_shapes[9] -> Nordland
-	# NOR_shapes[10] -> Oppland
-	# NOR_shapes[11] -> Oslo ?
-	# NOR_shapes[12] -> Rogaland
-	# NOR_shapes[13] -> Sor Trondelag
-	# NOR_shapes[14] -> Sogn og Fjordane
-	# NOR_shapes[15] -> Telemark 
-	# NOR_shapes[16] -> Troms
-	# NOR_shapes[17] -> Vest Agder
-	# NOR_shapes[18] -> Vestfold
 
 	if(choiche==0):
 		norway = add_geom(ax, NOR_shapes, "Norway", "gray")
@@ -114,7 +95,33 @@ def main():
 	plt.legend([finnmark, troms, nordland, nord_trondelag, sor_trondelag, 
 		more_og_romsdal, sogn_og_fjordane, hordaland, rogaland_og_agder, norway], 
 		labels, loc='lower right', fancybox=True)
+
+	manager = plt.get_current_fig_manager()
+	manager.resize(*manager.window.maxsize())
+
 	plt.show()
+
 
 if __name__ == '__main__':
    main()
+
+   
+	# NOR_shapes[0] -> Ostfold
+	# NOR_shapes[1] -> Akershus
+	# NOR_shapes[2] -> Aust Agder
+	# NOR_shapes[3] -> Buskerud
+	# NOR_shapes[4] -> Finnmark
+	# NOR_shapes[5] -> Hedmark
+	# NOR_shapes[6] -> Hordaland
+	# NOR_shapes[7] -> More og Romsdal
+	# NOR_shapes[8] -> Nord Trondelag
+	# NOR_shapes[9] -> Nordland
+	# NOR_shapes[10] -> Oppland
+	# NOR_shapes[11] -> Oslo ?
+	# NOR_shapes[12] -> Rogaland
+	# NOR_shapes[13] -> Sor Trondelag
+	# NOR_shapes[14] -> Sogn og Fjordane
+	# NOR_shapes[15] -> Telemark 
+	# NOR_shapes[16] -> Troms
+	# NOR_shapes[17] -> Vest Agder
+	# NOR_shapes[18] -> Vestfold

@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as pyplot
 from PIL import Image
-from fpdf import FPDF
 
 # Graphic's different design
 pyplot.style.use('ggplot')
@@ -45,7 +44,7 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
     	if not os.path.isdir(results_dir):
     		os.makedirs(results_dir)
         new_im.save(results_dir+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Graphics_Overview.jpg")
-        #new_im.show()
+        new_im.show()
     # Saving the current input overview image that will be used for the total overview pdf
     if dest==1:
     	script_dir2 = os.path.dirname(__file__)
@@ -53,16 +52,8 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
     	if not os.path.isdir(results_dir2):
     		os.makedirs(results_dir2)
         new_im.save(results_dir2+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Overview.jpg")
-    # Showing the current input overview image
 
 #-------------------------------------------------------------------------------------------
-
-def normalization(values):
-	column = list(float(a) for a in range(0, 0))
-	val = np.array(values)
-	val.astype(float)
-	column = val / val.max()
-	return column
 
 #%%%%%%%%%%%%%%%%%%%%%%
 # TRENDLINE EQUATION #
@@ -82,6 +73,12 @@ def trendline(x, y, col):
 	z2 = trendlineNorm(x, normalization(y))
 	return z[0], z2
     
+def normalization(values):
+	column = list(float(a) for a in range(0, 0))
+	val = np.array(values)
+	val.astype(float)
+	column = val / val.max()
+	return column
 #-------------------------------------------------------------------------------------------
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,22 +92,26 @@ def saveFigure(descr):
     pyplot.savefig(results_dir + sys.argv[1] +"_"+sys.argv[2]+descr, format="jpg")
 #-------------------------------------------------------------------------------------------
 
+
+#%%%%%%%%%%%%%%%%%
+#####  MAIN  #####
+#%%%%%%%%%%%%%%%%%
 print "-------------------------------"
 print " Elaborating the current input: \n\n Dataset: " + sys.argv[1]
 print " Data Input: " + sys.argv[2]
-yearInput = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[0])
+yearInput = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[0])
 yearsLen = len(yearInput.values)/12
+
 #%%%%%%%%%%%%%%%%%%
 # ANALYSIS PART 1 #
 #%%%%%%%%%%%%%%%%%%
 #-------------------------------------------------------------------------------------------
-# Graphic setup about current input with total data from 2005 to 2016
+# Graphic setup about current input with total data.
 #-------------------------------------------------------------------------------------------
-
-# Reading the total dataset about the current input from 2005 to 2016
-series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[1,sys.argv[2]])
+# Reading the total dataset about the current input.
+series1 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[1,sys.argv[2]])
 # Displaying the current plot
-series.plot(color="blue", linewidth=1.5)
+series1.plot(color="blue", linewidth=1.5)
 years = []
 j = 0
 # Collecting and displaying the correct values: a plot for values of every single year.
@@ -124,8 +125,8 @@ x = range(0, len(yearInput.values))
 pyplot.xticks(np.arange(min(x), max(x)+1, 12.0), years)
 # Setting the graphic's title
 pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Total graphic")
-series2 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[2]], squeeze=True)
-z1, z2 = trendline(x, series2.values.astype(float), "red")
+series1 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[sys.argv[2]], squeeze=True)
+z1, z2 = trendline(x, series1.values.astype(float), "red")
 saveFigure("_Total.jpg")
 results_dir = "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_AngCoeff.csv"
 with open(results_dir, "w") as text_file:
@@ -137,30 +138,29 @@ with open(results_dir, "w") as text_file:
 # ANALYSIS PART 2 #
 #%%%%%%%%%%%%%%%%%%
 #-------------------------------------------------------------------------------------------
-# Graphic setup about current input for each year from 2005 to 2016
+# Graphic setup about current input for each year.
 #-------------------------------------------------------------------------------------------
-# Reading the dataset about the current input for each year from 2005 to 2016
-series2 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[2]])
+# Reading the dataset about the current input for each year.
+series2 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[2]])
 # Initialize the graphic's figure
 fig2 = pyplot.figure()
 ax = fig2.add_subplot(111)
-
 # Set the x axis tick
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 x_pos = np.arange(len(months))
-test = []
+tempValues = []
 j = 0
 # Collecting and displaying the correct values: a plot for values of every single year.
 for i in range(len(series2.values)):
 	if j in range(12):
-		test.append(series2.values[i][1])
+		tempValues.append(series2.values[i][1])
 		j = j + 1
 		if(i == len(series2.values)-1):
-			pyplot.plot(x_pos, test, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
+			pyplot.plot(x_pos, tempValues, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
 	else:
-		pyplot.plot(x_pos, test, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
-		test = []
-		test.append(series2.values[i][1])
+		pyplot.plot(x_pos, tempValues, linewidth=2, alpha=0.8, label = int(series2.values[i-1][0]))
+		tempValues = []
+		tempValues.append(series2.values[i][1])
 		j = 1
 
 ax.legend(loc=4, ncol=1, fancybox=True, shadow=True)
@@ -174,31 +174,31 @@ saveFigure("_years.jpg")
 # ANALYSIS PART 3 #
 #%%%%%%%%%%%%%%%%%%
 #-------------------------------------------------------------------------------------------
-# Correlation matrix about current input between each year from 2005 to 2016 
+# Correlation matrix about current input between each year. 
 #-------------------------------------------------------------------------------------------
-# Reading the dataset about the current input between each single year from 2005 to 2016
-series3 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['year'], usecols=[0,sys.argv[2]])
+series3 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[2]])
+# Reading the dataset about the current input between each single year.
 corr = []
-test = []
+tempValues = []
 j = 0
 # Collecting the correct values to elaborate.
-for i in range(len(series2.values)+1):
+for i in range(len(series3.values)+1):
 	if j in range(12):
-		test.append(series2.values[i][1])
+		tempValues.append(series3.values[i][1])
 		j = j + 1
 	else:
-		corr.append(test)
-		test = []
+		corr.append(tempValues)
+		tempValues = []
 		if i in range(len(yearInput)):
-			test.append(series2.values[i][1])
+			tempValues.append(series3.values[i][1])
 			j = 1
 # Calculatic che correlation coefficent between each year of the input dataset
-test = np.corrcoef(corr)
+corrRes = np.corrcoef(corr)
 # Displaying the figure for the current matrix
-fig2 = pyplot.figure()
-ax = fig2.add_subplot(111)
+fig3 = pyplot.figure()
+ax = fig3.add_subplot(111)
 # Displaying the matrix with the results about correlation coefficents
-cax = ax.matshow(test, interpolation='nearest')
+cax = ax.matshow(corrRes, interpolation='nearest')
 # Setting the graphic's title
 pyplot.title(sys.argv[1] + "\n" + sys.argv[2]+ ": Correlation between different years")
 # Setting the x and y axis of the matrix
@@ -216,18 +216,18 @@ saveFigure("_years_Matrix.jpg")
 # ANALYSIS PART 4 #
 #%%%%%%%%%%%%%%%%%%
 #-------------------------------------------------------------------------------------------
-# Correlation matrix about current input between each single month from 2005 to 2016
+# Correlation matrix about current input between each single month.
 #-------------------------------------------------------------------------------------------
-# Reading the dataset about the current input for each year from 2005 to 2016
-series4 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[0,1,sys.argv[2]])
+# Reading the dataset about the current input for each year.
+series4 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[0,1,sys.argv[2]])
 # Calculatic che correlation coefficent between each year of the input dataset
 corr = []
 for month, year in series4.groupby(["month"], sort=False):
 	corr.append(year[sys.argv[2]].values)
 corrRes = np.corrcoef(corr)
 # Displaying the figure for the current matrix
-fig2 = pyplot.figure()
-ax = fig2.add_subplot(111)
+fig4 = pyplot.figure()
+ax = fig4.add_subplot(111)
 # Displaying the matrix with the results about correlation coefficents
 cax = ax.matshow(corrRes, interpolation='nearest')
 # Setting the graphic's title
@@ -260,6 +260,7 @@ listofimages=["Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.a
 create_single_overview(4, 1, 1, 3200, 600, listofimages)
 # Creating current single input overview
 create_single_overview(2, 2, 0, 1600, 1200, listofimages)
+
 
 print "\n Done! \n-------------------------------\n################################"
 #-------------------------------------------------------------------------------------------

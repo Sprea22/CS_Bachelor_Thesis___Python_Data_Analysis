@@ -82,50 +82,50 @@ def displayTotal(input, col):
 
 
 if(int(sys.argv[2]) >= 1):
-	series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[3]])
+	series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[3]])
 	# Initialize the graphic's figure
 	fig2 = pyplot.figure()
 	ax2 = fig2.add_subplot(111)
 	displayScatter(sys.argv[3], "blue")
 
 	if(int(sys.argv[2]) >= 2):
-		series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[4]])
+		series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[4]])
 		displayScatter(sys.argv[4], "red")
 
 		if(int(sys.argv[2]) >= 3):
-			series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[5]])
+			series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[5]])
 			displayScatter(sys.argv[5], "green")
 
 
 if(int(sys.argv[2]) >= 1):
-	series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[3]])
+	series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[3]])
 	# Initialize the graphic's figure
 	fig3 = pyplot.figure()
 	ax3 = fig3.add_subplot(111)
 	displayYears(sys.argv[3], "blue")
 
 	if(int(sys.argv[2]) >= 2):
-		series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[4]])
+		series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[4]])
 		displayYears(sys.argv[4], "red")
 
 		if(int(sys.argv[2]) >= 3):
-			series = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[5]])
+			series = pd.read_csv("Datasets/" + sys.argv[1]+".csv", index_col=['month'], usecols=[0,1,sys.argv[5]])
 			displayYears(sys.argv[5], "green")		
 
 if(int(sys.argv[2]) >= 1):
 	fig4 = pyplot.figure()
 	ax4 = fig4.add_subplot(111)
-	yearInput = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[0])
+	yearInput = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[0])
 	yearsLen = len(yearInput.values)/12
-	series3 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[3]])
+	series3 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[sys.argv[3]])
 	displayTotal(sys.argv[3], "blue")
 	
 	if(int(sys.argv[2]) >= 2):	
-		series3 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[4]])
+		series3 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[sys.argv[4]])
 		displayTotal(sys.argv[4], "red")
 
 		if(int(sys.argv[2]) >= 3):
-			series3 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=[sys.argv[5]])
+			series3 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[sys.argv[5]])
 			displayTotal(sys.argv[5], "green")
 
 pyplot.show()

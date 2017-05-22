@@ -8,7 +8,7 @@ import matplotlib.ticker as ticker
 # Graphic's different design
 pyplot.style.use('ggplot')
 # Reading the dataset about the current input for each year from 2005 to 2016
-series3 = pd.read_csv("County_Dataset/" + sys.argv[1]+".csv", usecols=range(2,10), header=0)
+series3 = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=range(2,10), header=0)
 corr = []
 for column in series3:
     corr.append(series3[column].values)
