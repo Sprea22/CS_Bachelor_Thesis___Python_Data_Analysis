@@ -24,6 +24,11 @@ for column in series:
     corr.append(series[column].values)
 # Calculatic che correlation coefficent between each year of the input dataset
 corrRes = np.corrcoef(corr)
+
+mat = np.matrix(corrRes)
+dataframe = pd.DataFrame(data=mat.astype(float))
+dataframe.to_csv("Results/"+sys.argv[1]+"/Total_Evidences/"+sys.argv[1]+"_CorrCoeff.csv", sep=',', header=False, float_format='%.2f', index=False)
+
 fig = pyplot.figure()
 ax = fig.add_subplot(111)
 # Displaying the matrix with the results about correlation coefficents

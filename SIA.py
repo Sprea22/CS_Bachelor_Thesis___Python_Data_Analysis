@@ -44,7 +44,7 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
     	if not os.path.isdir(results_dir):
     		os.makedirs(results_dir)
         new_im.save(results_dir+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Graphics_Overview.jpg")
-        new_im.show()
+        #new_im.show()
     # Saving the current input overview image that will be used for the total overview pdf
     if dest==1:
     	script_dir2 = os.path.dirname(__file__)
@@ -92,6 +92,15 @@ def saveFigure(descr):
     pyplot.savefig(results_dir + sys.argv[1] +"_"+sys.argv[2]+descr, format="jpg")
 #-------------------------------------------------------------------------------------------
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SAVE CORR COEFF VALUES TO CSV FILE #
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def saveMatrix(corrRes, dest):
+	mat = np.matrix(corrRes)
+	dataframe = pd.DataFrame(data=mat.astype(float))
+	dataframe.to_csv(dest, sep=',', header=False, float_format='%.2f', index=False)
+#-------------------------------------------------------------------------------------------
+
 
 #%%%%%%%%%%%%%%%%%
 #####  MAIN  #####
@@ -131,8 +140,8 @@ saveFigure("_Total.jpg")
 results_dir = "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_AngCoeff.csv"
 with open(results_dir, "w") as text_file:
 	text_file.write("," + sys.argv[1] + "-" + sys.argv[2]+"\n")
-	text_file.write("," + "Ang_Coeff " + "," + str(z1)+"\n")
-	text_file.write("," + "Norma_Ang_Coeff " + "," + str(z2)+"\n")
+	text_file.write("Ang_Coeff" + "," + str(z1)+"\n")
+	text_file.write("Norma_Ang_Coeff" + "," + str(z2)+"\n")
 
 #%%%%%%%%%%%%%%%%%%
 # ANALYSIS PART 2 #
@@ -211,6 +220,8 @@ pyplot.colorbar(cax)
 pyplot.tight_layout()
 # Saving the current graphic in the right folder
 saveFigure("_years_Matrix.jpg")
+saveMatrix(corrRes, "Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_years_CorrCoeff.csv")
+
 
 #%%%%%%%%%%%%%%%%%%
 # ANALYSIS PART 4 #
@@ -242,6 +253,8 @@ pyplot.xticks(x_pos,months)
 pyplot.colorbar(cax)
 pyplot.tight_layout()
 saveFigure("_months_Matrix.jpg")
+saveMatrix(corrRes, "Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_months_CorrCoeff.csv")
+
 #-------------------------------------------------------------------------------------------
 
 #%%%%%%%%%%%%%%%%%%

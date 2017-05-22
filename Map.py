@@ -47,7 +47,7 @@ def main():
 		# Decide the range of colors of the colorsMap
 		colorsMap='bwr'
 		dataInput = sys.argv[1]
-		inputSeries = pd.read_csv("countiesAverages.csv")
+		inputSeries = pd.read_csv("Datasets/countiesAverages.csv")
 		# Data input for each region
 		inputValues = [inputSeries[dataInput][0], inputSeries[dataInput][1], inputSeries[dataInput][2], inputSeries[dataInput][3],
 				inputSeries[dataInput][4], inputSeries[dataInput][5], inputSeries[dataInput][6], inputSeries[dataInput][7], inputSeries[dataInput][8]]
