@@ -96,7 +96,7 @@ def saveFigure(descr):
 #%%%%%%%%%%%%%%%%%
 #####  MAIN  #####
 #%%%%%%%%%%%%%%%%%
-print "-------------------------------"
+print "-----SIA-----------------------"
 print " Elaborating the current input: \n\n Dataset: " + sys.argv[1]
 print " Data Input: " + sys.argv[2]
 yearInput = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[0])
