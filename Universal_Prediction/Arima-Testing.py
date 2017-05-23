@@ -85,10 +85,10 @@ def output(data, predictions):
 
 # Load current dataset input
 series = pd.read_csv("Datasets/"+sys.argv[1]+".csv", usecols=[sys.argv[2]])
-
+dataset = series.values
+dataset = dataset.astype('float32')
 # Method for split the dataset between train and test
 splitDataset(series)
-
 train = Series.from_csv("Datasets/Output_Files/train.csv", )
 test = Series.from_csv("Datasets/Output_Files/test.csv", )
 
@@ -99,42 +99,41 @@ q_values = int(sys.argv[6])
 order = (p_values, d_values, q_values)
 
 warnings.filterwarnings("ignore")
-predictions_model(series.values, p_values, d_values, q_values)
+
+#########################################################
+# PREDICTION TEST ABOUT HISTORIC VALUES.
+#########################################################
+predictions_model(dataset, p_values, d_values, q_values)
 
 
-dataset = series.values
-dataset = dataset.astype('float32')
-
+#########################################################
+# PREDICTION ABOUT FUTURE VALUES
+#########################################################
 # Making the ARIMA Model with the current Dataset and Order previously chosen
 model = ARIMA(dataset, order=order)
 model_fit = model.fit(disp=0)
 # Filling the list "forecast" with the predictions results values
 forecast = model_fit.forecast(int(sys.argv[3]))[0]
 
+
 index = []
 for i in range(1,int(sys.argv[3])+1):
 	index.append(len(dataset) +i)
-
 # Writing the predictions results values inside an output document
 rows = zip(index, forecast)
 f = open("Results/futurePred_"+sys.argv[1]+"_"+sys.argv[2]+".csv", 'w')
 csv.writer(f).writerows(rows)
 f.close()
 
-
-
 # Reading the predictions results values just saved inside the document
 predFuture = Series.from_csv("Results/futurePred_"+sys.argv[1]+"_"+sys.argv[2]+".csv")
-
 # Load the predictions dataset
 predHistoric = Series.from_csv("Results/testPred_"+sys.argv[1]+"_"+sys.argv[2]+".csv")
 
 # Plot current input's historic values 
 series.plot(color="blue", linewidth=1.5, label="Series: "+sys.argv[1])
-
 # Plot current input's test prediction
 predHistoric.plot(color="red", linewidth=1.5, label="Prediction test:")
-
 # Plot current input's future prediction
 predFuture.plot(color="green", linewidth=1.5, label="Future Prediction:")
 
@@ -142,10 +141,8 @@ predFuture.plot(color="green", linewidth=1.5, label="Future Prediction:")
 ax = pyplot.subplot(111)
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=3, fancybox=True, shadow=True, fontsize=20)
 
-
 pyplot.xlabel("Years", fontsize=20)
 pyplot.ylabel(sys.argv[1]+" values", fontsize=20)
-
 
 # Display final graphic that compare historic and predicted values
 pyplot.show()
