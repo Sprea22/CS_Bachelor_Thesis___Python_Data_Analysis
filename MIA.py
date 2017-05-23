@@ -1,9 +1,7 @@
+import sys
 import numpy as np 
 import pandas as pd
-from pandas import Series
 import matplotlib.pyplot as pyplot
-import sys
-import matplotlib.ticker as ticker
 
 # Graphic's different design
 pyplot.style.use('ggplot')

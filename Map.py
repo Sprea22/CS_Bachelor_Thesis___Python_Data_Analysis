@@ -15,7 +15,7 @@ def add_geom(axes, shapeInput, labelInput, colorInput):
 def main():
 	choiche = input("0 --> Display Norwegian counties map \n1 --> Display current input\n\n")
  	# Downloaded from http://biogeo.ucdavis.edu/data/gadm2.8/shp/NOR_adm_shp.zip
-	fname = 'NOR/NOR_adm1.shp'
+	fname = 'Datasets/NOR/NOR_adm1.shp'
 	NOR_shapes = list(shpreader.Reader(fname).geometries())
 	plt.figure()
 	ax = plt.axes(projection=ccrs.Robinson())
