@@ -11,10 +11,6 @@
 
 ----------------------------------------------------------------------------------------------------
 
-python SIA.py "DatasetName" "DataInputName"
-
-Ex:
-
 python SIA.py Norway cages
 
 python SIA.py Norway Salmon_price_NOK
@@ -23,24 +19,22 @@ python SIA.py Troms cages
 
 python SIA.py Troms averageTemp
 
-
 ----------------------------------------------------------------------------------------------------
-
-python Analysis.py "DatasetName" "InputNumbers" "Input1" "Input" "Input3"
-
-EX:
-
-python SIA.py Norway cages
-
-
-----------------------------------------------------------------------------------------------------
-
 
 python MIA.py Norway
 
 python MIA.py Troms
 
+----------------------------------------------------------------------------------------------------
+
+python Map.py averageTemp
+
+python Map.py biomass
 
 ----------------------------------------------------------------------------------------------------
 
+python Analysis.py Norway 2 cages localities
 
+python Analysis.py Troms 3 feedConsumption biomass averageTemp
+
+----------------------------------------------------------------------------------------------------
