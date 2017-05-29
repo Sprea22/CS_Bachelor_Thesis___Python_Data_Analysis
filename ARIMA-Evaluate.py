@@ -1,6 +1,6 @@
-import warnings
-import sys
 import os
+import sys
+import warnings
 import numpy as np
 import pandas as pd
 from pandas import Series
@@ -41,7 +41,7 @@ def evaluate_arima_model(X, arima_order):
 def evaluate_models(dataset, p_values, d_values, q_values):
 	dataset = dataset.astype('float32')
 	best_score, best_cfg = float("inf"), None
-	filename = "Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/MAPE.csv"
+	filename = "Results_Forecast/"+sys.argv[1]+"/"+sys.argv[2]+"_MAPE.csv"
 	if not os.path.exists(os.path.dirname(filename)):	
 		os.makedirs(os.path.dirname(filename))
 
@@ -68,7 +68,7 @@ def evaluate_models(dataset, p_values, d_values, q_values):
 series = pd.read_csv("Datasets/"+sys.argv[1]+".csv", header=0, usecols=[sys.argv[2]])
 # evaluate parameters
 p_values = [0, 1, 2, 4, 6, 8, 10]
-d_values = [0,1,2,3]
-q_values = [0,1,2,3]
+d_values = [0, 1, 2, 3]
+q_values = [0, 1, 2, 3]
 warnings.filterwarnings("ignore")
 evaluate_models(series.values, p_values, d_values, q_values)

@@ -89,6 +89,8 @@ def output(data, predictions):
 
 # Load current dataset input
 series = pd.read_csv("Datasets/"+sys.argv[1]+".csv", usecols=[sys.argv[2]])
+yearInput = pd.read_csv("Datasets/" + sys.argv[1]+".csv", usecols=[0])
+
 dataset = series.values
 dataset = dataset.astype('float32')
 # Method for split the dataset between train and test
@@ -145,8 +147,19 @@ predFuture.plot(color="green", linewidth=1.5, label="Future Prediction:")
 ax = pyplot.subplot(111)
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=3, fancybox=True, shadow=True, fontsize=20)
 
-pyplot.xlabel("Years", fontsize=20)
-pyplot.ylabel(sys.argv[1]+" values", fontsize=20)
+years = []
+j = 0
+# Collecting and displaying the correct values: a plot for values of every single year.
+for i in range(len(yearInput)):
+    if j==11:
+        years.append(yearInput.values[i][0])
+        j=0
+    else:
+        j=j+1 
+x = range(0, len(yearInput.values))
+pyplot.xticks(np.arange(min(x), max(x)+1, 12.0), years)
+pyplot.xlabel("Years")
+pyplot.ylabel(sys.argv[2]+" in "+sys.argv[1], fontsize=20)
 
 os.remove("Datasets/train.csv")
 os.remove("Datasets/test.csv")

@@ -1,4 +1,4 @@
-year,month,averageTemp,cages,localities,numberSalmon,biomass,feedConsumption,restock,withdrawals
+year,month,averageSeaTemp,cages,localities,numberSalmon,biomass,feedConsumption,restock,withdrawals
 2007,January,4.9763514215,147,20,7471.245,19550.103627,2026.361,0,2292.696375
 2007,February,4.0014986482,140,19,7279.141,18858.588738,1333.956,0,2327.503166
 2007,March,3.4593511128,126,18,6497.596,15917.849943,1030.633,0,3205.103875

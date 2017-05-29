@@ -1,6 +1,5 @@
 import os
 import sys 
-import pylab 
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as pyplot
@@ -39,13 +38,13 @@ def create_single_overview(cols, rows, dest, width, height, listofimages):
 
     # Saving the current input overview image
     if dest==0:
-    	script_dir = os.path.dirname(__file__)
+        script_dir = os.path.dirname(__file__)
     	results_dir = os.path.join(script_dir, "Results/" + sys.argv[1]+"/"+sys.argv[2]+"/")
     	if not os.path.isdir(results_dir):
     		os.makedirs(results_dir)
         new_im.save(results_dir+"/"+ sys.argv[1] +"_"+sys.argv[2]+"_Graphics_Overview.jpg")
         #new_im.show()
-    # Saving the current input overview image that will be used for the total overview pdf
+    # Saving the current input overview image in a horizontal format
     if dest==1:
     	script_dir2 = os.path.dirname(__file__)
     	results_dir2 = os.path.join(script_dir2, "Results/" + sys.argv[1]+"/Total_Evidences/Single_Inputs")
@@ -68,7 +67,7 @@ def trendline(x, y, col):
 	# calc the trendline
 	z = np.polyfit(x, y, 1)
 	p = np.poly1d(z)
-	pylab.plot(x,p(x), c=col)
+	pyplot.plot(x,p(x), c=col)
 	# Display the line equation:
 	z2 = trendlineNorm(x, normalization(y))
 	return z[0], z2
