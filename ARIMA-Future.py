@@ -25,14 +25,19 @@ def splitDataset(X):
 # CALCULATED MAPE BETWEEN PREDICTIONS AND REAL VALUES#
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def mean_absolute_percentage_error(y_true, y_pred): 
-	rng = len(y_true)
-	diff = []
-	for i in range(0,rng):
-		diff.append(y_true[i] - y_pred[i])
-		diff[i] = diff[i] / y_true[i]
-	abs = np.abs(diff)
-	mn = np.mean(abs)
-	percentageError = mn * 100
+	try:
+		rng = len(y_true)
+		diff = []
+		for i in range(0,rng):
+			diff.append(y_true[i] - y_pred[i])
+			diff[i] = diff[i] / y_true[i]
+		abs = np.abs(diff)
+		mn = np.mean(abs)
+		percentageError = mn * 100
+	except:
+		rng = 0
+		abs = np.abs((y_true-y_pred)/y_true)
+		percentageError = abs * 100
 	return percentageError
 #-------------------------------------------------------------------------------------------
 
@@ -75,15 +80,15 @@ def output(data, predictions):
 	    except IndexError, e:
 	        item.append("placeholder")
 	    new_data.append(item)
-	filename = "Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/testPred.csv"
+	filename = "Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv"
 	if not os.path.exists(os.path.dirname(filename)):	
 		os.makedirs(os.path.dirname(filename))
-	f = open("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/testPred.csv", 'w+')
+	f = open("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv", 'w+')
 	csv.writer(f).writerows(new_data)
 	f.close()
-	data = pd.read_csv("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/testPred.csv")
+	data = pd.read_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv")
 	data = data.drop(data.columns[1], axis=1)
-	data.to_csv("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/testPred.csv", mode ='w', index=False)
+	data.to_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv", mode ='w', index=False)
 #-------------------------------------------------------------------------------------------
 
 
@@ -121,30 +126,47 @@ model_fit = model.fit(disp=0)
 # Filling the list "forecast" with the predictions results values
 forecast = model_fit.forecast(int(sys.argv[3]))[0]
 
+realValues = pd.read_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_2015.csv")
+realValuesData = realValues[sys.argv[2]].values
+realValuesData = realValuesData.astype('float32')
 
 index = []
 for i in range(1,int(sys.argv[3])+1):
 	index.append(len(dataset) +i)
+mape_list = []
+for i in range(0,len(forecast)):
+	mape_list.append(mean_absolute_percentage_error(realValuesData[i], forecast[i]))
+
 # Writing the predictions results values inside an output document
-rows = zip(index, forecast)
-f = open("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/futurePred.csv", 'w')
+rows = zip(index, realValuesData, forecast, mape_list)
+f = open("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_futurePred.csv", 'w')
 csv.writer(f).writerows(rows)
 f.close()
 
-# Reading the predictions results values just saved inside the document
-predFuture = Series.from_csv("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/futurePred.csv")
-# Load the predictions dataset
-predHistoric = Series.from_csv("Results/"+sys.argv[1]+"/"+sys.argv[2]+"/"+"Predictions/testPred.csv")
+realValues= pd.read_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_futurePred.csv", index_col=[0], usecols=[0,1])
+predFuture = pd.read_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_futurePred.csv", index_col=[0], usecols=[0,2])
 
+predHistoric = pd.read_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv", index_col=[0])
+# Reading the predictions results values just saved inside the document
+#predFuture = Series.from_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_futurePred.csv", index_col=0, tupleize_cols=True)
+# Load the predictions dataset
+#predHistoric = Series.from_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_testPred.csv")
+#realValues = Series.from_csv("Results_Forecast/"+sys.argv[1]+"/"+sys.argv[1]+"_"+sys.argv[2]+"_2015.csv", header=1)
+ax = pyplot.subplot(111)
+
+ax.plot(realValues, "g", label='Real 2015 Values', linewidth=2)
+ax.plot(predFuture, "orange", label='Prediction 2015 values', linewidth=2)
+ax.plot(predHistoric, "r", label='Prediction test values', linewidth=2)
+ax.plot(series, "b", label='Historic values', linewidth=2)
 # Plot current input's historic values 
-series.plot(color="blue", linewidth=1.5, label="Series: "+sys.argv[1])
+#series.plot(color="blue", linewidth=1.5, label="Series: "+sys.argv[1])
 # Plot current input's test prediction
-predHistoric.plot(color="red", linewidth=1.5, label="Prediction test:")
+#predHistoric.plot(color="red", linewidth=1.5, label="Prediction test:")
 # Plot current input's future prediction
-predFuture.plot(color="green", linewidth=1.5, label="Future Prediction:")
+#predFuture.plot(color="green", linewidth=1.5, label="Future Prediction:")
+#realValues.plot(color="orange", linewidth=1.5, label="Real 2015 Values")
 
 # Final graphic settings
-ax = pyplot.subplot(111)
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=3, fancybox=True, shadow=True, fontsize=20)
 
 years = []
@@ -164,4 +186,7 @@ pyplot.ylabel(sys.argv[2]+" in "+sys.argv[1], fontsize=20)
 os.remove("Datasets/train.csv")
 os.remove("Datasets/test.csv")
 # Display final graphic that compare historic and predicted values
+manager = pyplot.get_current_fig_manager()
+manager.resize(*manager.window.maxsize())
+
 pyplot.show()
