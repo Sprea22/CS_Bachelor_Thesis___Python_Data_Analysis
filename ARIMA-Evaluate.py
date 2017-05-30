@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from pandas import Series
 from statsmodels.tsa.arima_model import ARIMA
-from sklearn.metrics import mean_squared_error
 
 def mean_absolute_percentage_error(y_true, y_pred): 
 	try:
@@ -29,6 +28,7 @@ def evaluate_arima_model(X, arima_order):
 	train_size = int(len(X) * 0.66)
 	train, test = X[0:train_size], X[train_size:]
 	history = [x for x in train]
+	print train
 	# make predictions
 	predictions = list()
 	for t in range(len(test)):
@@ -68,7 +68,7 @@ def evaluate_models(dataset, p_values, d_values, q_values):
 	print('Best ARIMA%s MAPE=%.3f%%' % (best_cfg, best_score))
 
 # load dataset
-series = pd.read_csv("Datasets/"+sys.argv[1]+".csv", header=0, usecols=[sys.argv[2]])
+series = pd.read_csv("Datasets/"+sys.argv[1]+".csv", usecols=[sys.argv[2]])
 # evaluate parameters
 p_values = [0, 1, 2, 4, 6, 8, 10]
 d_values = [0, 1, 2, 3]

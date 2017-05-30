@@ -7,7 +7,6 @@ import pandas as pd
 from pandas import Series
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
-from sklearn.metrics import mean_squared_error
 
 pyplot.style.use('ggplot')
 
