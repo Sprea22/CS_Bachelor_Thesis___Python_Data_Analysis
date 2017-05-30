@@ -7,16 +7,20 @@ from pandas import Series
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 
-
 def mean_absolute_percentage_error(y_true, y_pred): 
-	rng = len(y_true)
-	diff = []
-	for i in range(0,rng):
-		diff.append(y_true[i] - y_pred[i])
-		diff[i] = diff[i] / y_true[i]
-	abs = np.abs(diff)
-	mn = np.mean(abs)
-	percentageError = mn * 100
+	try:
+		rng = len(y_true)
+		diff = []
+		for i in range(0,rng):
+			diff.append(y_true[i] - y_pred[i])
+			diff[i] = diff[i] / y_true[i]
+		abs = np.abs(diff)
+		mn = np.mean(abs)
+		percentageError = mn * 100
+	except:
+		rng = 0
+		abs = np.abs((y_true-y_pred)/y_true)
+		percentageError = abs * 100
 	return percentageError
     
 # evaluate an ARIMA model for a given order (p,d,q)
@@ -53,10 +57,9 @@ def evaluate_models(dataset, p_values, d_values, q_values):
 				order = (p,d,q)
 				try:
 					mape = evaluate_arima_model(dataset, order)
-
+					with open(filename, "a") as myfile:
+						myfile.write('%d, %d, %d, %.3f%% \n' % (p,d,q,mape))
 					if mape < best_score:
-						with open(filename, "a") as myfile:
-							myfile.write('%d, %d, %d, %.3f%% \n' % (p,d,q,mape))
 						best_score, best_cfg = mape, order
 					print('ARIMA%s MAPE=%.3f%%' % (order,mape))
 				except:
