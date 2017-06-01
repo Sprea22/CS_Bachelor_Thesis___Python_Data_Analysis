@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import cartopy.io.shapereader as shpreader
 
+# Method that allow to add a geometric shape on the current graphic axes
 def add_geom(axes, shapeInput, labelInput, colorInput):
 	axes.add_geometries(shapeInput, ccrs.Robinson(), edgecolor='black',label = labelInput, facecolor=colorInput, alpha=0.8)
 	return mpatches.Rectangle((0, 0), 1, 1, facecolor=colorInput)
@@ -15,12 +16,16 @@ def add_geom(axes, shapeInput, labelInput, colorInput):
 # Downloaded from http://biogeo.ucdavis.edu/data/gadm2.8/shp/NOR_adm_shp.zip
 fname = 'Datasets/NOR/NOR_adm1.shp'
 NOR_shapes = list(shpreader.Reader(fname).geometries())
-
+ax = plt.axes(projection=ccrs.Robinson())
+ax.coastlines(resolution='10m')
+ax.set_extent([4, 32, 57, 72], ccrs.Robinson())	
 # Rendering the sea
 #ax.stock_img()
 
+# Reading the user choice about the parameter on the current dataset
 dataInput = sys.argv[1]
 inputSeries = pd.read_csv("Datasets/countiesAverages.csv")
+
 # Data input for each region
 inputValues = [inputSeries[dataInput][0], inputSeries[dataInput][1], inputSeries[dataInput][2], inputSeries[dataInput][3],
 inputSeries[dataInput][4], inputSeries[dataInput][5], inputSeries[dataInput][6], inputSeries[dataInput][7], inputSeries[dataInput][8]]
@@ -37,10 +42,9 @@ col = scalarMap.to_rgba(inputValues)
 scalarMap.set_array(inputValues)
 plt.colorbar(scalarMap,label='Input Value')
 
-ax = plt.axes(projection=ccrs.Robinson())
-ax.coastlines(resolution='10m')
-ax.set_extent([4, 32, 57, 72], ccrs.Robinson())	
 
+
+# Add geometry shape of each county, together with the corresponding colors.
 norway = add_geom(ax, NOR_shapes, "Norway", "gray")
 finnmark = add_geom(ax, NOR_shapes[4], "Finnmark", col[0])
 troms = add_geom(ax, NOR_shapes[16], "Troms", col[1])
@@ -54,8 +58,8 @@ rogaland_og_agder = add_geom(ax, NOR_shapes[2], "Rogaland og Agder", col[8])
 rogaland_og_agder = add_geom(ax, NOR_shapes[12], "Rogaland og Agder", col[8])
 rogaland_og_agder = add_geom(ax, NOR_shapes[17], "Rogaland og Agder", col[8])
 
+# Final graphic customization and settings, such as title, labels and legend.
 plt.title('Norway - '+sys.argv[1] , fontsize=35)
-
 labels = [
 	'Finnmark', 
 	'Troms', 	
@@ -68,14 +72,13 @@ labels = [
 	'Rogaland og Agder',
 	'Other counties', 
 	]
-
 plt.legend([finnmark, troms, nordland, nord_trondelag, sor_trondelag, 
 		more_og_romsdal, sogn_og_fjordane, hordaland, rogaland_og_agder, norway], 
 		labels, loc='lower right', fancybox=True, fontsize=20)
 
+# Displaying the final graphic in full screen mode.
 manager = plt.get_current_fig_manager()
 manager.resize(*manager.window.maxsize())
-
 plt.show()
 
    
